@@ -4,37 +4,32 @@ import sys
 input = sys.stdin.readline
 
 V, E = map(int, input().split())
-start = int(input()) - 1
-INF = 11
-graph = [[] for _ in range(V)]
-distance = [INF] * (V)
+start = int(input())
+INF = 1e9
 
-for i in range(E):
+graph = [[] for _ in range(V+1)]
+distance = [INF] * (V+1)
+
+for _ in range(E):
     a,b,c = map(int, input().split())
-    graph[a-1].append((c,b-1))
-
+    graph[a].append((b,c))
+        
 def dijkstra():
     q = []
     heapq.heappush(q,(0,start))
+    distance[start] = 0
 
     while q:
         dist, now = heapq.heappop(q)
-        distance[now] = dist
+        
+        if distance[now] < dist:
+            continue
+            
+        for x in graph[now]:
+            if distance[x[0]] > dist + x[1]:
+                distance[x[0]] = dist + x[1]
+                heapq.heappush(q, (distance[x[0]], x[0]))
 
-        for d,n in graph[now]:
-            if distance[n] > dist + d:
-                distance[n] = dist + d
-                heapq.heappush(q, (distance[n], n))
-
-    for i in range(len(distance)-1):
-        if distance[i] == INF:
-            print("INF")
-        else:
-            print(distance[i])
-
-    if distance[len(distance)-1] == INF:
-        print("INF")
-    else:
-        print(distance[i])
-
+    for i in range(1,V+1):
+        print(distance[i] if distance[i]!=INF else "INF")
 dijkstra()
